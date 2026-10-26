@@ -11,6 +11,16 @@ class UserCrudTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_user_can_be_deleted(): void
+    {
+        $user = User::factory()->create();
+
+        $this->deleteJson('/api/users/'.$user->id)->assertNoContent();
+
+        $this->assertDatabaseMissing('users', ['id' => $user->id]);
+        $this->deleteJson('/api/users/'.$user->id)->assertNotFound();
+    }
+
     public function test_user_can_be_updated_and_keep_their_own_email(): void
     {
         $user = User::factory()->create();
