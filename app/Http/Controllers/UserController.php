@@ -7,6 +7,16 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public function index()
+    {
+        return response()->json(User::all());
+    }
+
+    public function show(User $user)
+    {
+        return response()->json($user);
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([

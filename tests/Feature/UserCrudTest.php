@@ -11,6 +11,22 @@ class UserCrudTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_users_can_be_listed_and_viewed_without_passwords(): void
+    {
+        $user = User::factory()->create();
+
+        $this->getJson('/api/users')->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', $user->id)
+            ->assertJsonMissingPath('0.password');
+
+        $this->getJson('/api/users/'.$user->id)->assertOk()
+            ->assertJsonPath('email', $user->email)
+            ->assertJsonMissingPath('password');
+
+        $this->getJson('/api/users/999')->assertNotFound();
+    }
+
     public function test_user_can_be_created_with_a_hashed_password(): void
     {
         $this->postJson('/api/users', [
